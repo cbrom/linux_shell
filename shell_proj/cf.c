@@ -12,13 +12,12 @@ int main(int args, char* argv[]){
 	}
 	else{
 		//create file
-		fd = creat(argv[1], S_IREAD | S_IWRITE);
+		fd = creat(argv[1], 0777);
 		if (fd == -1)
 			printf("Error in creating %s file\n", argv[1]);
 		else{
 			printf("%s file was created.\n", argv[1]);
 		}
-		close(fd);
 	}
 	exit(0);
 }
