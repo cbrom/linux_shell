@@ -1,23 +1,41 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
+char *description = "This will allow you to create files\nUSAGE: cf <filename> [directory]\n";
 
-int main(int args, char* argv[]){
+int main(int argc, char *argv[]){
+	char *filename;
 	int fd;
-	if(args !=2){
-		printf("Please enter a valid command!!!/nuse hlp for help");
+	if(argc == 2){
+		filename = argv[1];
+	}
+	else if(argc == 3){
+		filename = argv[2];
+		strcat(filename, "/");
+		strcat(filename, argv[1]);
+	}
+	else if (argc == 1)
+	{
+		printf("%s\n", description);
+		exit(1);
 	}
 	else{
-		//create file
-		fd = creat(argv[1], 0777);
-		if (fd == -1)
-			printf("Error in creating %s file\n", argv[1]);
-		else{
-			printf("%s file was created.\n", argv[1]);
-		}
+		printf("USAGE: cf <filename> [directory]\n");
+		exit(0);
 	}
-	exit(0);
+	
+	fd = creat(filename, 0766);
+	if(fd == -1){
+		printf("Error creating file, check if the directory exists\n");
+	}
+	close(fd);
+	
+	
+	
+	return 0;
 }
