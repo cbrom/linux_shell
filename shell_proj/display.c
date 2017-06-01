@@ -1,29 +1,46 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
+#define MAX 10485760 // 10MB
 
-int main(int args, char* argv[]){
-        int fd1, fd2, nr;
-        char* file1;
-        char* buffer;
-        size_t len_buffer = 4096;
-        if(args !=2){
-                printf("Please enter a valid command!!!/nuse hlp for help");
+char *description = "This will display a file in the given path.\nUSAGE: display <filename>\n";
+
+int main(int argc, char *argv[]){
+        char *file, *buff;
+
+        int fd;
+
+        if(argc == 2){
+                file = argv[1];
+        }
+        else if (argc == 1)
+        {
+                printf("%s\n", description);
         }
         else{
-                file1 = argv[1];
-                //create file
-                fd1 = open(file1, O_RDONLY);
-                ssize_t len_read = read(fd1, *buf, len_buffer);
-                if (fd == -1){
-                        printf("Error in openning/reading %s file\n", file1);
-                        exit(1);
-                }
-		printf("%s\n", buff);
-                close(fd1);
+                printf("USAGE: display <filename>\n");
+                exit(0);
         }
-        exit(0);
+
+        fd = open(file, O_RDONLY);
+        
+        if(fd == -1){
+                printf("Error displaying file, check if you have read permissions\n");
+                exit(0);
+        }
+
+        ssize_t s = read(fd, buff, MAX);
+        if(s == -1){
+                printf("error 1\n");
+                exit(0);
+        }
+        close(fd);      
+        printf("%s\n", buff);
+        
+        return 0;
 }
