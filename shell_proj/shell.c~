@@ -38,8 +38,8 @@ int main(void)
 			args[0] = "./cf"
 			args[1] =  "test.c"
 			//args[2] = "./cf"
-			args[2] = "./"
-			args[3] = NULL
+			args[3] = "./"
+			args[4] = NULL
 			
 			execvp(args[0], args);
 		}
