@@ -13,7 +13,7 @@
 char *current_dir = "./"; /* The current working directory */
 
 int read_input(char *);
-int parse_command(char *, char **);
+void parse_command(char*, char**);
 
 int main(void)
 {
@@ -22,24 +22,24 @@ int main(void)
 	char *command;
 	int background;
 	pid_t pid;
-	int status;	
+	int status;
 
 	while (shouldrun) {
 		printf("myshell>");
 		fflush(stdout);
 
-		background = read_input(command, args);// read the user input
+		background = read_input(command);// read the user input
 
 		if(strcmp("exit", command) < 0){
 			exit(0);	// if the user entered exit then the shell closes
 		}
 		pid = fork();
 		if(pid== 0){ // execute command
-			args[0] = "./cf"
-			args[1] =  "test.c"
+			args[0] = "./cf";
+			args[1] =  "test.c";
 			//args[2] = "./cf"
-			args[2] = "./"
-			args[3] = NULL
+			args[2] = "./";
+			args[3] = NULL;
 			
 			execvp(args[0], args);
 		}
@@ -70,7 +70,7 @@ int read_input(char * command){
 	*command = '\0';
 }
 
-void parse_command(char *command, char *args[]){
+void parse_command(char *command, char* args[]){
 	char *c = command;
 	int i = 0;
 	while(*c != '\0'){
