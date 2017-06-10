@@ -9,35 +9,72 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
+#include <sys/shm.h>
+#include <sys/ipc.h>
+
 #define RL_BUFSIZE 1024
 #define TOKEN_BUFSIZE 64
 #define TOKEN_DELIMITERS " \t\r\n\a"
 
 int sh_help(char **args);
+int sh_memory_allocate();
+int sh_memory_deallocate();
 
 void loop(void);
 char *read_line(void);
 char **parse_line(char *line);
 int launch_bin(char **args);
 
+int seg_id;
+char* data, cwd[1024];
+
 int main(int argc, char **argv)
 {
+  sh_memory_allocate();
   loop();
   // Perform any shutdown/cleanup.
   return EXIT_SUCCESS;
+}
+
+int sh_memory_allocate(){
+  key_t key;
+  char cwd[1024];
+  data = malloc(sizeof(cwd) * sizeof(char));
+  getcwd(cwd, sizeof(cwd));
+
+  key = 5678;
+
+  seg_id = shmget(key, sizeof(cwd), IPC_CREAT | 0666);
+  if (seg_id == -1){
+    printf("Failed to create memory segment");
+    return 0;
+  }
+
+  data = shmat(seg_id, NULL, 0);
+  if (data == (char*) -1){
+    printf("Failed to attatch memory");
+    return 0;
+  }
+  strcpy(data, cwd);
+  return 1;
+
+}
+
+int sh_memory_deallocate(){
+  shmdt(data);
+  shmctl(seg_id, IPC_RMID, 0);
+  return 0;
 }
 
 void loop(void){
   char *line;
   char **args;
   int shouldrun = 1;
+  getcwd(cwd, sizeof(cwd));
 
   while(shouldrun){
     char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-        fprintf(stdout, "Current working dir: %s\n", cwd);
-    else
-        perror("getcwd() error");
+
     printf("shell$>");
     line = read_line();
     args = parse_line(line);
@@ -115,6 +152,7 @@ int execute(char **args){
 
   for (i = 0; i < num_builtins(); i++) {
     if(strcmp(args[0], "exit") == 0){
+      sh_memory_deallocate();
       return EXIT_SUCCESS;
     }
     else if (strcmp(args[0], "hlp") == 0){
