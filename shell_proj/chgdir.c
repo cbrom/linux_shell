@@ -16,12 +16,12 @@ char *data, *sh_data;
 
 int main(int argc, char *argv[]){
 	int ret = sh_memory_get();
-	printf("current directory: %s\n", data);
-	printf("changin to %s\n", argv[1]);
-	char* appended= sh_data;
+	//printf("current directory: %s\n", data);
+	char* appended = malloc(1024);
+	strcpy(appended, sh_data);
 	strcat(appended, "/");
 	strcat(appended, argv[1]);
-	printf("appended: %s\n", appended);
+	//printf("appended: %s\n", appended);
 
 	if (argv[1] == ".."){
 		//back
@@ -39,7 +39,9 @@ int main(int argc, char *argv[]){
 		strcpy(sh_data, appended);
 		return 0;
 	}
-		
+	else{
+		printf("directory does not exist!\n");
+	}
 	shmdt(sh_data);
 	return 0;
 }
@@ -50,12 +52,12 @@ int directory_exists(char* directory){
 
     if (stat(directory, &sb) == 0 && S_ISDIR(sb.st_mode))
     {
-        printf("YES\n");
+        //printf("YES\n");
         return 1;
     }
     else
     {
-        printf("NO\n");
+        //printf("NO\n");
         return 0;
     }
 }

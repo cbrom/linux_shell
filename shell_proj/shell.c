@@ -12,7 +12,7 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 
-#define RL_BUFSIZE 1024
+
 #define TOKEN_BUFSIZE 64
 #define TOKEN_DELIMITERS " \t\r\n\a"
 
@@ -70,12 +70,10 @@ void loop(void){
   char *line;
   char **args;
   int shouldrun = 1;
-  getcwd(cwd, sizeof(cwd));
 
   while(shouldrun){
-    char cwd[1024];
 
-    printf("shell$>");
+    printf("shell: %s$>", data);
     line = read_line();
     args = parse_line(line);
     shouldrun = execute(args);
