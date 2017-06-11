@@ -175,22 +175,43 @@ int execute(char **args){
       pid = fork();
       if (pid == 0) {
         // Child process
-        char *command = malloc(100 * sizeof(char*));
+        char *command = malloc(500 * sizeof(char*));
         strcpy(command, "./");
         command = strcat(command, args[0]);
         if ((strcmp("cf", args[0]) == 0) || (strcmp("cpf", args[0]) == 0) || (strcmp("display", args[0]) == 0)){
-          // printf("this is %s\n", args[0]);
-          // printf("path %s: \n", args[1]);
+          
+
+          char *args2 = NULL;
+          if (args[2] != NULL){
+            //printf("not null------------------------\n");
+            //printf("%s\n", args[2]);
+            int path_type = sh_path_type(args[1]);
+            if (path_type == 0){
+              char *directory = malloc(1024 *sizeof(char*));
+              strcpy(directory, data);
+              strcat(directory, "/");
+              strcat(directory, args[2]);
+              args2 = directory;
+            }
+          }
+
+
           int path_type = sh_path_type(args[1]);
           if (path_type == 1){
           }else if (path_type == 0){
-            char *directory = malloc(100 *sizeof(char*));
+            char *directory = malloc(1024 *sizeof(char*));
             strcpy(directory, data);
             strcat(directory, "/");
             strcat(directory, args[1]);
             strcpy(args[1], directory);
-            //printf("local path%s\n", directory);
+            if (args2 != NULL){
+              args[2] = args2;
+            }
           }
+          // printf("args 0 %s\n", args[0]);
+          // printf("args 1 %s: \n", args[1]);
+          // printf("args 2%s\n", args[2]);
+
         }
 
         if (execvp(command, args) == -1) {

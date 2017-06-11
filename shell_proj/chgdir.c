@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 
 	if(directory_exists(argv[1]) == 1){
 		//full path
-		strcpy(sh_data, argv[1]);
+		strcpy(sh_data, appended);
 		return 0;
 	}else if(directory_exists(appended) == 1){
 		//local path

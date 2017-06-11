@@ -11,7 +11,7 @@ int main(int args, char* argv[]){
     int fd1, fd2, nr;
 	char *file1, *file2;
 	char *buffer;
-	size_t len_buffer = 4096;
+	size_t len_buffer = 8192;
     if(args !=3){
             printf("Please enter a valid command!!!\nuse hlp for help");
     }
@@ -27,7 +27,6 @@ int main(int args, char* argv[]){
 		}
 	}
 	ssize_t len_read = read(fd1, buffer, len_buffer);
-	printf("len_read%s\n", buffer);
 
 	fd2 = open(file2, O_CREAT | O_WRONLY);
 	if(fd2 == -1){
