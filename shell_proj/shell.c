@@ -19,6 +19,7 @@
 int sh_help(char **args);
 int sh_memory_allocate();
 int sh_memory_deallocate();
+int sh_path_type(char*);
 
 void loop(void);
 char *read_line(void);
@@ -34,6 +35,19 @@ int main(int argc, char **argv)
   loop();
   // Perform any shutdown/cleanup.
   return EXIT_SUCCESS;
+}
+
+int sh_path_type(char* dir){
+  char* str = strdup(dir);
+  char *token;
+  while((token = strsep(&str, "/"))){
+    if((int)*token == 0){
+      //of full path type
+      return 1;
+    }
+  }
+  //of local path type
+  return 0;
 }
 
 int sh_memory_allocate(){
@@ -136,9 +150,6 @@ int num_builtins(){
   return sizeof(builtin_str) /sizeof(char *);
 }
 
-/*
-  Builtin functions
-*/
 
 
 int execute(char **args){
@@ -167,6 +178,20 @@ int execute(char **args){
         char *command = malloc(100 * sizeof(char*));
         strcpy(command, "./");
         command = strcat(command, args[0]);
+        if ((strcmp("cf", args[0]) == 0) || (strcmp("cpf", args[0]) == 0) || (strcmp("display", args[0]) == 0)){
+          // printf("this is %s\n", args[0]);
+          // printf("path %s: \n", args[1]);
+          int path_type = sh_path_type(args[1]);
+          if (path_type == 1){
+          }else if (path_type == 0){
+            char *directory = malloc(100 *sizeof(char*));
+            strcpy(directory, data);
+            strcat(directory, "/");
+            strcat(directory, args[1]);
+            strcpy(args[1], directory);
+            //printf("local path%s\n", directory);
+          }
+        }
 
         if (execvp(command, args) == -1) {
           perror("sh error --:-- ");
